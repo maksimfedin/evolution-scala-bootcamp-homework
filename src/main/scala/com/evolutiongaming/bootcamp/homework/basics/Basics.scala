@@ -6,6 +6,8 @@ import scala.annotation.tailrec
 /**
  * @author Maxim Fedin
  */
+// Homework. Implement functions that calculate https://en.wikipedia.org/wiki/Lowest_common_denominator and
+// https://en.wikipedia.org/wiki/Greatest_common_divisor for integers.
 object Basics extends App {
 
 
