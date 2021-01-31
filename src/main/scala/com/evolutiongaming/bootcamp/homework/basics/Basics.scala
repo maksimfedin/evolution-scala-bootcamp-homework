@@ -1,14 +1,22 @@
 package com.evolutiongaming.bootcamp.homework.basics
 
+
+import scala.annotation.tailrec
+
 /**
  * @author Maxim Fedin
  */
 object Basics extends App {
 
 
-    def lcm(a: Int, b: Int): Int = ???
+    def lcm(a: Int, b: Int): Int = (a, b) match {
+        case (a, b) if a == 0 || b == 0 => throw new Exception("No LCM for zero values")
+        case _ => Math.abs(a * b) / gcd(a, b)
+    }
 
-    def gcd(a: Int, b: Int): Int = ???
-
-
+    @tailrec
+    def gcd(a: Int, b: Int): Int = (Math.abs(a), Math.abs(b)) match {
+        case (a, 0) => a
+        case _ => gcd(b, a % b)
+    }
 }

@@ -18,3 +18,5 @@ organization := "com.evolutiongaming.bootcamp.homework"
 version := "1.0"
 
 
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.3" % Test
+
