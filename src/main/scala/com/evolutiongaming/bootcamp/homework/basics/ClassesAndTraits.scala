@@ -80,41 +80,41 @@ object ClassesAndTraits extends App {
     }
 
 
-    final case class Rectangle(startX: Double, startY: Double, width: Double, height: Double) extends Shape2D {
-        override def x: Double = startX
+    final case class Rectangle(centerX: Double, centerY: Double, width: Double, height: Double) extends Shape2D {
+        override def x: Double = centerX
 
-        override def y: Double = startY
+        override def y: Double = centerY
 
-        override def minX: Double = startX - width / 2
+        override def minX: Double = centerX - width / 2
 
-        override def maxX: Double = startX + width / 2
+        override def maxX: Double = centerX + width / 2
 
-        override def minY: Double = startY - height / 2
+        override def minY: Double = centerY - height / 2
 
-        override def maxY: Double = startY + height / 2
+        override def maxY: Double = centerY + height / 2
 
-        override def move(dx: Double, dy: Double): Shape2D = this.copy(startX + dx, startY + dy)
+        override def move(dx: Double, dy: Double): Shape2D = this.copy(centerX + dx, centerY + dy)
 
         override def area: Double = width * height
     }
 
-    final case class Square(centreX: Double, centreY: Double, length: Double) extends Shape2D {
+    final case class Square(centerX: Double, centerY: Double, side: Double) extends Shape2D {
 
-        override def x: Double = centreX
+        override def x: Double = centerX
 
-        override def y: Double = centreY
+        override def y: Double = centerY
 
-        override def minX: Double = centreX - length / 2
+        override def minX: Double = centerX - side / 2
 
-        override def maxX: Double = centreX + length / 2
+        override def maxX: Double = centerX + side / 2
 
-        override def minY: Double = centreY - length / 2
+        override def minY: Double = centerY - side / 2
 
-        override def maxY: Double = centreY + length / 2
+        override def maxY: Double = centerY + side / 2
 
-        override def move(dx: Double, dy: Double): Shape2D = this.copy(centreX + dx, centreX + dy)
+        override def move(dx: Double, dy: Double): Shape2D = this.copy(centerX + dx, centerX + dy)
 
-        override def area: Double = length * length
+        override def area: Double = side * side
     }
 
     final case class Triangle(a: Point, b: Point, c: Point) extends Shape2D {
@@ -237,7 +237,7 @@ object ClassesAndTraits extends App {
     }
 
 
-    final case class Cube(centerX: Double, centerY: Double, centerZ: Double, length: Double) extends Shape3D {
+    final case class Cube(centerX: Double, centerY: Double, centerZ: Double, side: Double) extends Shape3D {
 
         override def x: Double = centerX
 
@@ -245,23 +245,23 @@ object ClassesAndTraits extends App {
 
         override def z: Double = centerZ
 
-        override def minX: Double = centerX - length / 2
+        override def minX: Double = centerX - side / 2
 
-        override def maxX: Double = centerX + length / 2
+        override def maxX: Double = centerX + side / 2
 
-        override def minY: Double = centerY - length / 2
+        override def minY: Double = centerY - side / 2
 
-        override def maxY: Double = centerY + length / 2
+        override def maxY: Double = centerY + side / 2
 
-        override def minZ: Double = centerZ + length / 2
+        override def minZ: Double = centerZ + side / 2
 
-        override def maxZ: Double = centerZ - length / 2
+        override def maxZ: Double = centerZ - side / 2
 
         override def move(dx: Double, dy: Double, dz: Double): Shape3D = this.copy(centerX + dx, centerX + dy, centerZ + dz)
 
-        override def surfaceArea: Double = 6 * length * length
+        override def surfaceArea: Double = 6 * side * side
 
-        override def volume: Double = length * length * length
+        override def volume: Double = side * side * side
 
     }
 
@@ -320,9 +320,9 @@ object ClassesAndTraits extends App {
             c = Point3D(x = c.x + dx, y = c.y + dy, z = c.z + dz)
         )
 
-        override def surfaceArea: Double = ??? //TODO
+        override def surfaceArea: Double = ???
 
-        override def volume: Double = ??? //TODO
+        override def volume: Double = ???
 
     }
 
