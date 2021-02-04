@@ -24,23 +24,20 @@ class BasicsTest extends AnyFunSuite {
 
 
     test("LCM works fine on a positive values (1024,600)") {
-        assert(lcm(1024, 600) == 76800)
+        assert(lcm(1024, 600).contains(76800))
     }
 
     test("LCM works fine if one of the values is negative (-1024,600)") {
-        assert(lcm(-1024, 600) == 76800)
+        assert(lcm(-1024, 600).contains(76800))
     }
 
     test("LCM works fine on a negative values (-1024,-600)") {
-        assert(lcm(-1024, -600) == 76800)
+        assert(lcm(-1024, -600).contains(76800))
     }
 
 
     test("LCM throws an error if one of the values is zero") {
-        val thrown = intercept[Exception] {
-            lcm(1024, 0)
-        }
-        assert(thrown.getMessage === "No LCM for zero values")
+        assert(lcm(1024, 0) === None)
     }
 
 

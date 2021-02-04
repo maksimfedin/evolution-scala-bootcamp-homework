@@ -301,7 +301,6 @@ object ClassesAndTraits extends App {
 
         override def z: Double = (a.z + b.z + c.z) / 3
 
-
         override def minX: Double = List(a.x, b.x, c.x).min
 
         override def maxX: Double = List(a.x, b.x, c.x).max

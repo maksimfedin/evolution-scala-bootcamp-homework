@@ -11,9 +11,9 @@ import scala.annotation.tailrec
 object Basics extends App {
 
 
-    def lcm(a: Int, b: Int): Int = (a, b) match {
-        case (a, b) if a == 0 || b == 0 => throw new Exception("No LCM for zero values")
-        case _ => Math.abs(a * b) / gcd(a, b)
+    def lcm(a: Int, b: Int): Option[Int] = (a, b) match {
+        case (a, b) if a == 0 || b == 0 => None
+        case _ => Some(Math.abs(a * b) / gcd(a, b))
     }
 
     @tailrec
