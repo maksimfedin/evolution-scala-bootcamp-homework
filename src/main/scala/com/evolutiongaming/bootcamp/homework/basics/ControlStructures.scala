@@ -67,11 +67,12 @@ object ControlStructures {
     final case class MaxResult(command: Max, result: Double) extends Result
 
 
-    def parseCommand(x: String): Either[ErrorMessage, Command] = {
+    def parseCommand(x: String): Either[ErrorMessage, Command] =
         x
           .trim
           .split(" ")
           .toList match {
+            case List(_) =>  Left(ErrorMessage("No arguments has been added"))
             case x :: xs =>
                 Try(xs.map(_.toDouble)) match {
                     case Success(arguments) =>
@@ -92,30 +93,28 @@ object ControlStructures {
                 }
             case _ => Left(ErrorMessage("Unable to parse command"))
         }
-    }
 
-    def calculate(x: Command): Either[ErrorMessage, Result] = x match {
-        case cmd@Divide(dividend, divisor) =>
-            Either.cond(
-                divisor != 0,
-                DivideResult(cmd, dividend / divisor),
-                ErrorMessage("Cannot divide on zero")
-            )
-        case cmd@Sum(numbers) => Right(SumResult(cmd, numbers.sum))
-        case cmd@Average(numbers) => Right(AverageResult(cmd, numbers.sum / numbers.length))
-        case cmd@Min(numbers) => Right(MinResult(cmd, numbers.min))
-        case cmd@Max(numbers) => Right(MaxResult(cmd, numbers.max))
-
-    }
-
-    def renderResult(x: Result): Either[ErrorMessage, String] = {
+    def calculate(x: Command): Either[ErrorMessage, Result] =
         x match {
-            case DivideResult(command, result) => Right(s"${formatResult(command.dividend)} divided by ${formatResult(command.divisor)} is ${formatResult(result)}")
-            case SumResult(command, result) => Right(s"the sum of ${formatList(command.numbers)} is ${formatResult(result)}")
-            case AverageResult(command, result) => Right(s"the average of ${formatList(command.numbers)} is ${formatResult(result)}")
-            case MinResult(command, result) => Right(s"the minimum of ${formatList(command.numbers)} is ${formatResult(result)}")
-            case MaxResult(command, result) => Right(s"the maximum of ${formatList(command.numbers)} is ${formatResult(result)}")
+            case cmd@Divide(dividend, divisor) =>
+                Either.cond(
+                    divisor != 0,
+                    DivideResult(cmd, dividend / divisor),
+                    ErrorMessage("Cannot divide on zero")
+                )
+            case cmd@Sum(numbers) => Right(SumResult(cmd, numbers.sum))
+            case cmd@Average(numbers) => Right(AverageResult(cmd, numbers.sum / numbers.length))
+            case cmd@Min(numbers) => Right(MinResult(cmd, numbers.min))
+            case cmd@Max(numbers) => Right(MaxResult(cmd, numbers.max))
+
         }
+
+    def renderResult(x: Result): Either[ErrorMessage, String] = x match {
+        case DivideResult(command, result) => Right(s"${formatResult(command.dividend)} divided by ${formatResult(command.divisor)} is ${formatResult(result)}")
+        case SumResult(command, result) => Right(s"the sum of ${formatList(command.numbers)} is ${formatResult(result)}")
+        case AverageResult(command, result) => Right(s"the average of ${formatList(command.numbers)} is ${formatResult(result)}")
+        case MinResult(command, result) => Right(s"the minimum of ${formatList(command.numbers)} is ${formatResult(result)}")
+        case MaxResult(command, result) => Right(s"the maximum of ${formatList(command.numbers)} is ${formatResult(result)}")
     }
 
 

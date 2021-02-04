@@ -30,6 +30,10 @@ class ControlStructuresTest extends AnyFlatSpec {
         assert(process("average 4 3 8.5 4") == "the average of 4 3 8.5 4 is 4.875")
     }
 
+    "no arguments passed" should "be ok" in {
+        assert(process("average") == "Error: No arguments has been added")
+    }
+
     "min" should "be ok" in {
         assert(process("min 4 -3 -17") == "the minimum of 4 -3 -17 is -17")
     }
