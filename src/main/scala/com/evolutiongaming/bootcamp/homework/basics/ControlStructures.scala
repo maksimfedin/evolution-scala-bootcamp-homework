@@ -117,8 +117,7 @@ object ControlStructures {
         case MaxResult(command, result) => Right(s"the maximum of ${formatList(command.numbers)} is ${formatResult(result)}")
     }
 
-
-    private def formatList(xs: List[Double]): String = xs.map(x => formatResult(x)).mkString(" ")
+    private def formatList(xs: List[Double]): String = xs.map(formatResult).mkString(" ")
 
     private def formatResult(result: Double): String = {
         val format = new DecimalFormat("#.###")
