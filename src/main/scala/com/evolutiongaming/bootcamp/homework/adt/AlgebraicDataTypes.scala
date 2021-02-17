@@ -51,63 +51,36 @@ object AlgebraicDataTypes extends App {
 
     // the reason I use case class instead of case object,
     // as I will be able to compare the each rank afterwards
-    sealed trait Rank
+    sealed abstract class Rank(val rank: Int)
 
-    final case object Two extends Rank {
-        val rank: Int = 2
-    }
 
-    final case object Three extends Rank {
-        val rank = 3
-    }
+    final case object Two extends Rank(2)
 
-    final case object Four extends Rank {
-        val rank: Int = 4
-    }
+    final case object Three extends Rank(3)
 
-    final case object Five extends Rank {
-        val rank: Int = 5
-    }
+    final case object Four extends Rank(4)
 
-    final case object Six extends Rank {
-        val rank: Int = 6
-    }
+    final case object Five extends Rank(5)
 
-    final case object Seven extends Rank {
-        val rank: Int = 7
-    }
+    final case object Six extends Rank(6)
 
-    final case object Eight extends Rank {
-        val rank: Int = 8
-    }
+    final case object Seven extends Rank(7)
 
-    final case object Nine extends Rank {
-        val rank: Int = 9
-    }
+    final case object Eight extends Rank(8)
 
-    final case object Ten extends Rank {
-        val rank: Int = 10
-    }
+    final case object Nine extends Rank(9)
 
-    final case object Eleven extends Rank {
-        val rank: Int = 11
-    }
+    final case object Ten extends Rank(10)
 
-    final case object Jack extends Rank {
-        val rank: Int = 12
-    }
+    final case object Eleven extends Rank(11)
 
-    final case object Queen extends Rank {
-        val rank: Int = 13
-    }
+    final case object Jack extends Rank(12)
 
-    final case object King extends Rank {
-        val rank: Int = 14
-    }
+    final case object Queen extends Rank(13)
 
-    final case object Ace extends Rank {
-        val rank: Int = 15
-    }
+    final case object King extends Rank(14)
+
+    final case object Ace extends Rank(15)
 
     object Rank {
         def apply(value: Int): Either[String, Rank] = {
@@ -132,13 +105,13 @@ object AlgebraicDataTypes extends App {
     }
 
     final case class Card(
-        rank: Either[String, Rank],
-        suit: Either[String, Suit]
+        rank: Rank,
+        suit: Suit
     )
 
     object Card {
 
-        def apply(rank: Either[String, Rank], suit: Either[String, Suit]): Card = new Card(rank, suit)
+        def apply(rank: Rank, suit: Suit): Either[String, Card] = Right(new Card(rank, suit))
 
         def apply(stringCard: String): Either[String, Card] = {
             stringCard.splitAt(1) match {
@@ -148,7 +121,7 @@ object AlgebraicDataTypes extends App {
                       .leftMap(_ => s"Unable to parse string $rank rank as Int")
                       .flatMap { r =>
                           (Rank(r), Suit(suit)) match {
-                              case (rank@Right(_), suit@Right(_)) => Right(Card(rank, suit))
+                              case (Right(rank), Right(suit)) => Card(rank, suit)
                               case (Left(err), Right(_)) => Left(err)
                               case (Right(_), Left(err)) => Left(err)
                               case (Left(err1), Left(err2)) => Left(s"$err1, $err2")
@@ -187,10 +160,12 @@ object AlgebraicDataTypes extends App {
 
     object HoldemHand {
 
-        def apply(values: List[Card]): Either[String, HoldemHand] = {
-            if (values.length == 2) Right(new HoldemHand(values) {})
-            else Left(s"[HoldemHand error] Incorrect number of cards in: $values")
-        }
+        def apply(values: List[Card]): Either[String, HoldemHand] = Either.cond(
+            values.length == 2,
+            new HoldemHand(values) {},
+            s"[HoldemHand error] Incorrect number of cards in: $values"
+        )
+
 
         def apply(values: String): Either[String, HoldemHand] = foldEither(
             values
@@ -209,10 +184,12 @@ object AlgebraicDataTypes extends App {
 
     object OmahaHand {
 
-        def apply(values: List[Card]): Either[String, OmahaHand] = {
-            if (values.length == 4) Right(new OmahaHand(values) {})
-            else Left(s"[OmahaHand error] Incorrect number of cards in: $values")
-        }
+        def apply(values: List[Card]): Either[String, OmahaHand] = Either.cond(
+            values.length == 4,
+            new OmahaHand(values) {},
+            s"[OmahaHand error] Incorrect number of cards in: $values"
+        )
+
 
         def apply(values: String): Either[String, OmahaHand] = foldEither(
             values
@@ -231,44 +208,43 @@ object AlgebraicDataTypes extends App {
 
     object Board {
 
-        def apply(values: List[Card]): Either[String, Board] = {
-            if (values.length == 5) Right(new Board(values) {})
-            else Left(s"[Board error] Incorrect number of cards in: $values")
-        }
+        def apply(values: List[Card]): Either[String, Board] = Either.cond(
+            values.length == 5,
+            new Board(values) {},
+            s"[Board error] Incorrect number of cards in: $values"
+        )
 
-        def apply(values: String): Either[String, Board] = {
-            foldEither(
-                values
-                  .split(" ")
-                  .toList
-                  .map(Card(_))
-            ).flatMap { cards =>
-                Board(cards)
-            }.leftMap(err => s"[Board error] $err")
-        }
+
+        def apply(values: String): Either[String, Board] = foldEither(
+            values
+              .split(" ")
+              .toList
+              .map(Card(_))
+        ).flatMap { cards =>
+            Board(cards)
+        }.leftMap(err => s"[Board error] $err")
     }
 
     sealed trait TestCase
 
-    abstract case class TexasHoldemCase private(hands: List[Either[String, HoldemHand]], board: Either[String, Board]) extends TestCase
+    abstract case class TexasHoldemCase private(hands: List[HoldemHand], board: Board) extends TestCase
 
     object TexasHoldemCase {
 
         def apply(
-            hands: List[Either[String, HoldemHand]] = List.empty[Either[String, HoldemHand]],
-            board: Either[String, Board]
+            hands: List[HoldemHand] = List.empty[HoldemHand],
+            board: Board
         ): Either[String, TexasHoldemCase] = Right(new TexasHoldemCase(hands, board) {})
 
 
     }
 
-    abstract case class OmahaHoldemCase private(hands: List[Either[String, OmahaHand]], board: Either[String, Board]) extends TestCase
+    abstract case class OmahaHoldemCase private(hands: List[OmahaHand], board: Board) extends TestCase
 
     object OmahaHoldemCase {
-
         def apply(
-            hands: List[Either[String, OmahaHand]] = List.empty[Either[String, OmahaHand]],
-            board: Either[String, Board]
+            hands: List[OmahaHand] = List.empty[OmahaHand],
+            board: Board
         ): Either[String, OmahaHoldemCase] = Right(new OmahaHoldemCase(hands, board) {})
 
 

@@ -13,7 +13,7 @@ class AlgebraicDataTypesTest extends AnyFlatSpec {
 
     // Card
     "Card" should "be parsed" in {
-        assert(Card("S14") == Right(Card(Right(King), Right(Spade))))
+        assert(Card("S14") == Card(King,Spade))
     }
 
     "Card" should "not be parsed as the Suit is wrong" in {
@@ -29,7 +29,7 @@ class AlgebraicDataTypesTest extends AnyFlatSpec {
     "HoldemHand" should "be parsed" in {
         assert(
             HoldemHand("S14 D2") match {
-                case Right(HoldemHand(List(Card(Right(King), Right(Spade)), Card(Right(Two), Right(Diamond))))) => true
+                case Right(HoldemHand(List(Card(King, Spade), Card(Two, Diamond)))) => true
                 case _ => false
             }
         )
@@ -52,8 +52,8 @@ class AlgebraicDataTypesTest extends AnyFlatSpec {
     "OmahaHand" should "be parsed" in {
         assert(
             OmahaHand("S14 D2 C6 S9") match {
-                case Right(OmahaHand(List(Card(Right(King),Right(Spade)), Card(Right(Two),Right(Diamond)), Card(Right(Six),Right(Club)), Card(Right(Nine),Right(Spade))))) => true
-                case x => false
+                case Right(OmahaHand(List(Card(King, Spade), Card(Two, Diamond), Card(Six, Club), Card(Nine, Spade)))) => true
+                case _ => false
             }
         )
     }
@@ -76,7 +76,7 @@ class AlgebraicDataTypesTest extends AnyFlatSpec {
     "Board" should "be parsed" in {
         assert(
             Board("D3 S5 H5 S14 D2") match {
-                case Right(Board(List(Card(Right(Three), Right(Diamond)), Card(Right(Five), Right(Spade)), Card(Right(Five), Right(Heart)), Card(Right(King), Right(Spade)), Card(Right(Two), Right(Diamond))))) => true
+                case Right(Board(List(Card(Three, Diamond), Card(Five, Spade), Card(Five, Heart), Card(King, Spade), Card(Two, Diamond)))) => true
                 case _ => false
             }
         )
@@ -86,31 +86,6 @@ class AlgebraicDataTypesTest extends AnyFlatSpec {
         assert(Board("D16 S5 H5 S14 D2") == Left("[Board error] Unable to parse rank 16"))
     }
 
-    //TestCase
 
-    "TexasHoldemCase" should "be parsed" in {
-        assert(
-            TexasHoldemCase(
-                hands = List(HoldemHand("S14 D2"), HoldemHand("S14 D3")),
-                board = Board("D3 S5 H5 S14 D2")
-            ) match {
-                case Right(TexasHoldemCase(List(Right(HoldemHand(List(Card(Right(King),Right(Spade)), Card(Right(Two),Right(Diamond))))), Right(HoldemHand(List(Card(Right(King),Right(Spade)), Card(Right(Three),Right(Diamond)))))),Right(Board(List(Card(Right(Three),Right(Diamond)), Card(Right(Five),Right(Spade)), Card(Right(Five),Right(Heart)), Card(Right(King),Right(Spade)), Card(Right(Two),Right(Diamond))))))) => true
-                case _ => true
-            }
-        )
-    }
-
-
-    "OmahaHoldemCase" should "be parsed" in {
-        assert(
-            OmahaHoldemCase(
-                hands = List(OmahaHand("S14 D2 C6 S9"), OmahaHand("S11 D5 C9 D3")),
-                board = Board("D3 S5 H5 S14 D2")
-            ) match {
-                case Right(OmahaHoldemCase(List(Right(OmahaHand(List(Card(Right(King),Right(Spade)), Card(Right(Two),Right(Diamond))))), Right(OmahaHand(List(Card(Right(King),Right(Spade)), Card(Right(Three),Right(Diamond)))))),Right(Board(List(Card(Right(Three),Right(Diamond)), Card(Right(Five),Right(Spade)), Card(Right(Five),Right(Heart)), Card(Right(King),Right(Spade)), Card(Right(Two),Right(Diamond))))))) => true
-                case _ => true
-            }
-        )
-    }
 
 }
