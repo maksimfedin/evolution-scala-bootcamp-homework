@@ -20,9 +20,13 @@ object BulkySourcesPlugin extends AutoPlugin {
 
     override lazy val globalSettings: Seq[Setting[_]] = Seq(bulkyThresholdInLines := 100)
 
-    override val projectSettings: Seq[Setting[_]] = Seq(
-        bulkySources := getBulkyLines((Compile / sources).value, bulkyThresholdInLines.value),
-        (Test / bulkySources) := getBulkyLines((Test / sources).value, bulkyThresholdInLines.value))
+    override val projectSettings: Seq[Setting[_]] = inConfig(Compile)(baseBulkySources) ++ inConfig(Test)(baseBulkySources)
+
+    lazy val baseBulkySources: Seq[Setting[_]] = Seq(
+        bulkySources := {
+            getBulkyLines(sources.value, bulkyThresholdInLines.value)
+        }
+    )
 
     private def getBulkyLines(files: Seq[File], threshold: Int): Seq[(Int, sbt.File)] = {
         files.map { file => (sbt.IO.readLines(file).length, file) }
