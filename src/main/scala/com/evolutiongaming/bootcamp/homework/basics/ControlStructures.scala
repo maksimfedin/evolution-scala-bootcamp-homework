@@ -70,16 +70,16 @@ object ControlStructures {
     def parseCommand(x: String): Either[ErrorMessage, Command] =
         x
           .trim
-          .split(" ")
+          .split("\\s+")
           .toList match {
-            case List(_) =>  Left(ErrorMessage("No arguments has been added"))
+            case _ :: Nil =>  Left(ErrorMessage("No arguments has been added"))
             case x :: xs =>
                 Try(xs.map(_.toDouble)) match {
                     case Success(arguments) =>
                         (x, arguments) match {
                             case (CommandName.Divide, args) =>
                                 args match {
-                                    case List(dividend, divisor) => Right(Divide(dividend, divisor))
+                                    case dividend :: divisor :: Nil => Right(Divide(dividend, divisor))
                                     case _ => Left(ErrorMessage("Unable to parse divide arguments"))
                                 }
                             case (CommandName.Sum, args) => Right(Sum(args))
@@ -109,12 +109,12 @@ object ControlStructures {
 
         }
 
-    def renderResult(x: Result): Either[ErrorMessage, String] = x match {
-        case DivideResult(command, result) => Right(s"${formatResult(command.dividend)} divided by ${formatResult(command.divisor)} is ${formatResult(result)}")
-        case SumResult(command, result) => Right(s"the sum of ${formatList(command.numbers)} is ${formatResult(result)}")
-        case AverageResult(command, result) => Right(s"the average of ${formatList(command.numbers)} is ${formatResult(result)}")
-        case MinResult(command, result) => Right(s"the minimum of ${formatList(command.numbers)} is ${formatResult(result)}")
-        case MaxResult(command, result) => Right(s"the maximum of ${formatList(command.numbers)} is ${formatResult(result)}")
+    def renderResult(x: Result): String = x match {
+        case DivideResult(command, result) => s"${formatResult(command.dividend)} divided by ${formatResult(command.divisor)} is ${formatResult(result)}"
+        case SumResult(command, result) => s"the sum of ${formatList(command.numbers)} is ${formatResult(result)}"
+        case AverageResult(command, result) => s"the average of ${formatList(command.numbers)} is ${formatResult(result)}"
+        case MinResult(command, result) => s"the minimum of ${formatList(command.numbers)} is ${formatResult(result)}"
+        case MaxResult(command, result) => s"the maximum of ${formatList(command.numbers)} is ${formatResult(result)}"
     }
 
     private def formatList(xs: List[Double]): String = xs.map(formatResult).mkString(" ")
@@ -131,8 +131,7 @@ object ControlStructures {
         for {
             command <- parseCommand(x)
             result <- calculate(command)
-            renderedResult <- renderResult(result)
-        } yield renderedResult
+        } yield renderResult(result)
     }.leftMap(formatErrorResult)
       .merge
 
