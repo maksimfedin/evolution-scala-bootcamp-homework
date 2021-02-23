@@ -18,12 +18,11 @@ object BulkySourcesPlugin extends AutoPlugin {
 
     override def trigger = allRequirements
 
-    override lazy val globalSettings: Seq[Setting[_]] = Seq(bulkyThresholdInLines := 100)
-
     override val projectSettings: Seq[Setting[_]] = inConfig(Compile)(baseBulkySources) ++ inConfig(Test)(baseBulkySources)
 
     lazy val baseBulkySources: Seq[Setting[_]] = Seq(
         bulkySources := {
+            bulkyThresholdInLines := 100
             getBulkyLines(sources.value, bulkyThresholdInLines.value)
         }
     )
