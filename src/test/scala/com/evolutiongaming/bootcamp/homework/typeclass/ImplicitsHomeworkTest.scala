@@ -89,7 +89,7 @@ class ImplicitsHomeworkTest extends AnyFunSuite {
                     watchedPewDiePieTimes = 234
                 )
             )
-        ) // Size is 146
+        )
 
         val tweet2 = Twit(
             id = 10001,
@@ -103,9 +103,9 @@ class ImplicitsHomeworkTest extends AnyFunSuite {
                     watchedPewDiePieTimes = 283
                 )
             )
-        ) // Size is 144
+        )
 
-        val twitterCache = MyTwitter.createTwitCache(150)
+        val twitterCache = MyTwitter.createTwitCache(220)
 
         twitterCache.put(tweet1)
         twitterCache.get(10000) shouldEqual Some(tweet1)

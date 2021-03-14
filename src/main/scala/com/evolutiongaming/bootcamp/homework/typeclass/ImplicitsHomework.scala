@@ -30,12 +30,12 @@ object ImplicitsHomework extends App {
     object SuperVipCollections4s {
         type SizeScore = Int
 
-        val BYTE_SIZE = 1
-        val INT_SIZE = 4
-        val LONG_SIZE = 8
-        val CHAR_SIZE = 2
+        val ByteSize = 1
+        val IntSize = 4
+        val LongSize = 8
+        val CharSize = 2
 
-        val OBJECT_HEADER_SIZE = 12
+        val ObjectHeaderSize = 12
 
         trait GetSizeScore[T] {
             def apply(value: T): SizeScore
@@ -47,6 +47,7 @@ object ImplicitsHomework extends App {
 
 
         object syntax {
+
             implicit class GetSizeScoreOps[T: GetSizeScore](inner: T) {
                 def sizeScore: SizeScore = GetSizeScore[T].apply(inner)
             }
@@ -154,7 +155,13 @@ object ImplicitsHomework extends App {
                 override def iterator[T](f: Set[T]): Iterator[T] = f.iterator
             }
 
-            implicit val mapIterate: Iterate2[mutable.Map] = new Iterate2[mutable.Map] {
+            implicit val mapIterate: Iterate2[Map] = new Iterate2[Map] {
+                override def iterator1[T, S](f: Map[T, S]): Iterator[T] = f.keys.iterator
+
+                override def iterator2[T, S](f: Map[T, S]): Iterator[S] = f.values.iterator
+            }
+
+            implicit val mutableMapIterate: Iterate2[mutable.Map] = new Iterate2[mutable.Map] {
                 override def iterator1[T, S](f: mutable.Map[T, S]): Iterator[T] = f.keys.iterator
 
                 override def iterator2[T, S](f: mutable.Map[T, S]): Iterator[S] = f.values.iterator
@@ -180,25 +187,18 @@ object ImplicitsHomework extends App {
              List and other collections and then replace those with generic instances.
               */
 
-            implicit val byteSizeScore: GetSizeScore[Byte] = _ => BYTE_SIZE
-            implicit val charSizeScore: GetSizeScore[Char] = _ => CHAR_SIZE
-            implicit val intSizeScore: GetSizeScore[Int] = _ => INT_SIZE
-            implicit val longSizeScore: GetSizeScore[Long] = _ => LONG_SIZE
+            implicit val byteSizeScore: GetSizeScore[Byte] = _ => ByteSize
+            implicit val charSizeScore: GetSizeScore[Char] = _ => CharSize
+            implicit val intSizeScore: GetSizeScore[Int] = _ => IntSize
+            implicit val longSizeScore: GetSizeScore[Long] = _ => LongSize
 
-
-            implicit val StringSizeScore: GetSizeScore[String] = _.length * CHAR_SIZE + OBJECT_HEADER_SIZE
-
-            implicit def ArraySizeScore[T: GetSizeScore]: GetSizeScore[Array[T]] = _.map(_.sizeScore).sum + OBJECT_HEADER_SIZE
-
-            implicit def ListSizeScore[T: GetSizeScore]: GetSizeScore[List[T]] = _.map(_.sizeScore).sum + OBJECT_HEADER_SIZE
-
-            implicit def VectorSizeScore[T: GetSizeScore]: GetSizeScore[Vector[T]] = _.map(_.sizeScore).sum + OBJECT_HEADER_SIZE
+            implicit val StringSizeScore: GetSizeScore[String] = _.length * CharSize + ObjectHeaderSize
 
             implicit def IterableSizeScore[T: GetSizeScore, F[_] : Iterate]: GetSizeScore[F[T]] = iter =>
-                Iterate[F].iterator(iter).map(_.sizeScore).sum + OBJECT_HEADER_SIZE
+                Iterate[F].iterator(iter).map(_.sizeScore).sum + ObjectHeaderSize
 
             implicit def Iterable2SizeScore[K: GetSizeScore, V: GetSizeScore, F[_, _] : Iterate2]: GetSizeScore[F[K, V]] = iter =>
-                Iterate2[F].iterator1(iter).map(_.sizeScore).sum + Iterate2[F].iterator2(iter).map(_.sizeScore).sum + OBJECT_HEADER_SIZE
+                Iterate2[F].iterator1(iter).map(_.sizeScore).sum + Iterate2[F].iterator2(iter).map(_.sizeScore).sum + ObjectHeaderSize
         }
 
     }
@@ -231,10 +231,10 @@ object ImplicitsHomework extends App {
 
         // It is much better to implement implicit on a case classes for a GetSizeScore though...
         implicit val twitSizeScore: GetSizeScore[Twit] = twit =>
-            twit.id.sizeScore + twit.attributes.sizeScore + twit.hashTags.sizeScore + twit.userId.sizeScore + OBJECT_HEADER_SIZE
+            twit.id.sizeScore + twit.attributes.sizeScore + twit.hashTags.sizeScore + twit.userId.sizeScore + twit.fbiNotes.sizeScore + ObjectHeaderSize
 
         implicit val fbiNoteSizeScore: GetSizeScore[FbiNote] = fbiNote =>
-            fbiNote.month.sizeScore + fbiNote.favouriteChar.sizeScore + fbiNote.watchedPewDiePieTimes.sizeScore + OBJECT_HEADER_SIZE
+            fbiNote.month.sizeScore + fbiNote.favouriteChar.sizeScore + fbiNote.watchedPewDiePieTimes.sizeScore + ObjectHeaderSize
 
         def createTwitCache(maxSizeScore: SizeScore): TwitCache = new TwitCache {
             private val cache: MutableBoundedCache[Long, Twit] = new MutableBoundedCache[Long, Twit](maxSizeScore = maxSizeScore)
@@ -242,6 +242,7 @@ object ImplicitsHomework extends App {
             override def put(twit: Twit): Unit = cache.put(twit.id, twit)
 
             override def get(id: Long): Option[Twit] = cache.get(id)
+
         }
     }
 
