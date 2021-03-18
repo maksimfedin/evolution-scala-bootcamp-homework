@@ -11,4 +11,5 @@ libraryDependencies += "org.typelevel" %% "cats-core" % catsVersion
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.3" % Test
 libraryDependencies += "org.scalatestplus" %% "scalatestplus-scalacheck" % scalaTestVersion % Test
 
+coverageEnabled := true
 bulkyThresholdInLines := 10
