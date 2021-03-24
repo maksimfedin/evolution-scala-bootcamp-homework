@@ -26,3 +26,6 @@ libraryDependencies ++= Seq(
 )
 
 bulkyThresholdInLines := 10
+
+addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.11.1" cross CrossVersion.full)
+
