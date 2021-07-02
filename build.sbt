@@ -27,6 +27,7 @@ libraryDependencies ++= Seq(
     "org.scalaj" %% "scalaj-http" % "2.4.2" % Test
 )
 
+coverageEnabled := true
 bulkyThresholdInLines := 10
 
 addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.11.1" cross CrossVersion.full)
